@@ -1,0 +1,91 @@
+\documentclass[progress]{cmpreport}
+\title{Project Proposal}
+\author{Benjamin Lee Xin Lone}
+\registration{100292465}
+\supervisor{Richard Harvey}
+\ccode{CMP-6012Y}
+
+\bibliographystyle{apalike}
+
+\usepackage{comment}
+\usepackage{rotating}
+\usepackage{subfloat}
+\begin{document}
+	
+	\section{Description}
+		This project aims to identify the impact that machine learning can have on the fight against ransomware while also looking into alternatives. The COVID-19 pandemic has significantly increased the amount of cyberattacks around the world due to reasons such as, working from home where the internet is less protected, and an increase in unemployment which encouraging those who had been relieved to commit cybercrimes \citep{BEAMAN2021102490}. This will continue as long as the pandemic and movement restriction are still in place. To combat this, cyber security of those working from home must be improved for the foreseeable future, with one this solutions being an Anti-Ransomware software that makes use of machine learning. Ransomware can be very difficult to detect as it is able to change its behaviour alongside the ability to camouflage into any program, email attachment, and files alike. Machine learning will be able to adapt to how existing ransomware behave, making it easier to detect currently known threats alongside ransomware with similar traits. This project will aim to solve some of the major controversy surrounding the use of machine learning to detect ransomware.
+			
+	\section{Research}
+		Machine learning was created to use a set of data and algorithms that resembles human intelligence through the act of analysis \citep{elnaqa_murphy_2015}. When given a set of data on currently known ransomware, the machine will be able to analyse each an every known variant and how each of them behaves. The idea result would be a machine that would be able to predict and contain new variants of ransomware through the act of learning behavioural patterns in new and older variants. This however will not be sustainable in the long term as ransomware become more complicated and unpredictable. A way to get around this would be to train a machine using an One-Class Support Vector Machine that will teach it to identify positive data results, while data that is different compared to the positive data set would return as negative \citep{6298824}. In order for One-Class SVM to work, an ample amount of data must be provided to the machine in order to get ethical results. This could lead to a case where by the machine would be trained in an unsupervised manner, furthermore, high-dimensional datasets may make it more difficult for the machine to detect anomalies \citep{ERFANI2016121}.
+	
+	\section{Approach}
+		The project will be done using the traditional waterfall method as a majority of the deliverables would depend on each other to proceed. The first half of the project will consist of researching how ransomware is spread, current ransomware threats, reviewing recent and pass ransomware attacks, analysing existing anti malware software's, as well as researching how machine learning has already been used to combat against ransomware. The research task should be given a timeslot from the beginning of week 6 to at least the end of the autumn semester. The second half of the project would be building a simple One-Class SVM Anti-Malware software that would be able to detect malware and ransomware in the selected file or directory, another software without machine learning would be created as a controlled variable so that a comparison can conclude the effectiveness of machine learning. This half of the project will take up the rest of the academic year to ensure that the program works as intended.  
+	
+	\section{Risks}	
+		There are a number of risk in the potential project proposal, some of them are time based risks that depends on how the other parts of the projects, and some are risks related that relate to the testing of the program itself. The list of Risks includes:
+		\begin{itemize}
+			\item Testing of potentially harmful malware
+			\item Time taken to search and teach data to Machine
+			\item Time taken to bug test machine learning program
+			\item Program not being able to work as expected 
+		\end{itemize}
+		Countermeasures would need to be placed, especially in regards to testing with malware. Testing can be done in a virtual machines such as \href{https://www.virtualbox.org/}{Oracle's VM Virtual Box} which simulates operating systems in a safe environment making it perfect to test the program. The use of unharmful test malware can be another alternative, provided by \href{https://www.eicar.org/?page_id=3950}{EICAR}. In regards to time based risks, it would be better to allow for a longer testing period of the program, allowing for more time to fix bugs as well as fix any potential problems in regards to machine learning.
+	\pagebreak
+	
+	\begin{cmpfigure}{Project Gantt chart \label{pplan}}
+		\begin{sideways}
+			\newganttchartelement{voidbar}{
+				voidbar/.style={
+					draw=black,
+					top color=black!25,
+					bottom color=black!23
+			}}
+			
+			\begin{ganttchart}[x unit=0.35cm, y unit chart = 1.0cm, y unit title=0.5cm, title height=1.0, vgrid, title label font=\scriptsize,
+				canvas/.style={draw=black, dotted},
+				/pgfgantt/milestone left shift = 0,
+				/pgfgantt/milestone right shift = 0
+				]{1}{36}
+				\gantttitle{Project schedule shown for semester week numbers}{36} \\
+				\gantttitlelist{1,...,36}{1}\\
+				\gantttitlelist{1,...,13}{1}
+				\gantttitle{CB}{4}
+				\gantttitle{AP}{2}
+				\gantttitlelist{1,...,8}{1}
+				\gantttitle{EB}{4}
+				\gantttitlelist{9,...,13}{1}\\
+				
+				
+				%the elements, bars and milestones, are identified as elem0, elem1, etc
+				
+				%elem1
+				\ganttbar{Project proposal}{1}{2}     \\  %elem0  
+				\ganttbar{Literature review}{2}{5}    \\  %elem1 
+				\ganttbar{Research on ransomware}{6}{8} \\  %elem2
+				\ganttbar{Research on recent ransomware attacks}{9}{10} \\%elem3
+				\ganttbar{Research on current ransomware countermeasures}{11}{12} \\%elem4
+				\ganttbar{Research on machine learning}{13}{15} \\%elem5
+				\ganttbar{Progress Report}{6}{11} \\%elem6
+				\ganttmilestone{Submission of Progress Report}{12} \\%elem7
+
+				
+				%week 1 of semester 2 is the 17th week in schedule 
+				\ganttbar{Coding}{16}{20}                 \\%elem8	
+				\ganttbar{Testing}{21}{29}                \\%elem9
+				\ganttbar{Final report writing}{18}{29}        \\ %elem10
+				\ganttmilestone{All items delivered}{31}    	\\%elem11
+				\ganttbar{Compilation of portfolio}{31}{33}    \\%elem12
+				\ganttmilestone{Portfolio submission}{33}  \\ %elem13
+				\ganttbar{Inspection preparation}{31}{36}  %elem14
+				
+				\ganttlink{elem0}{elem1} \ganttlink{elem1}{elem2} \ganttlink{elem2}{elem3}
+				\ganttlink{elem3}{elem4} \ganttlink{elem4}{elem5} \ganttlink{elem5}{elem8}
+				\ganttlink{elem8}{elem9} \ganttlink{elem9}{elem11} \ganttlink{elem10}{elem11}
+				\ganttlink{elem11}{elem12} \ganttlink{elem12}{elem13}
+				]				
+			\end{ganttchart}
+		\end{sideways}
+	\end{cmpfigure}	
+
+	\bibliography{Proposal}
+\end{document}
