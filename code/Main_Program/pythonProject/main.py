@@ -17,27 +17,17 @@ import sympy as sy
 from scipy.stats import norm
 from sklearn.model_selection import train_test_split as tts
 
-class getVariable:
-    def __init__(self, var=0):
-        self._var =var
-
-    def get_var(self):
-        return self._var
-
-    def set_var(self, x):
-
-        self._var = x
-
 def monitorSystem(handle):
     csvFile = open('sensorResult.csv', 'w', newline='')
     writer = csv.writer(csvFile)
-    runtime = datetime.datetime.now() + datetime.timedelta(seconds=30)
-    while datetime.datetime.now() < runtime:
+    i=0
+    for i in range(100):
         cpuLoad = sensorVariable.fetch_cpuLoad(handle)
         cpuTemp = sensorVariable.fetch_cpuTemp(handle)
         cpuPower= sensorVariable.fetch_cpuPower(handle)
         hddTemp = sensorVariable.fetch_hddTemp(handle)
         writer.writerow(np.array([cpuLoad, cpuTemp, cpuPower, hddTemp], dtype=float))
+        i+=1
     csvFile.close()
 
 def analyzeActivity(model):
@@ -53,6 +43,7 @@ def analyzeActivity(model):
     cputempMu, cputempSigma = model.MLE(cputemp)
     cpupowerMu, cpupowerSigma = model.MLE(cpupower)
     hddtempMu, hddtempSigma = model.MLE(hddtemp)
+    print(cpuloadMu, cpuloadSigma, cputempMu, cputempSigma, cpupowerMu, cpupowerSigma, hddtempMu, hddtempSigma)
     #PDF
     print('pdf')
     with open('cpuLoadPDF.csv', 'w', newline='') as cpuloadpdf:  # FILE NAME
@@ -70,10 +61,10 @@ def analyzeActivity(model):
     hddtempPDF = pd.DataFrame(pd.read_csv('hddTempPDF.csv')).to_numpy()
     #predicting
     print('prediction')
-    cpuloadPrediction = model.predict(cpuloadMu, cpuloadSigma, cpuloadPDF, cpuload)
-    cputempPrediction = model.predict(cputempMu, cputempSigma, cputempPDF, cputemp)
-    cpupowerPrediction = model.predict(cpupowerMu, cpupowerSigma, cpupowerPDF, cpupower)
-    hddtempPrediction = model.predict(hddtempMu, hddtempSigma, hddtempPDF, hddtemp)
+    cpuloadPrediction = model.Predict(cpuloadMu, cpuloadSigma, cpuloadPDF, cpuload)
+    cputempPrediction = model.Predict(cputempMu, cputempSigma, cputempPDF, cputemp)
+    cpupowerPrediction = model.Predict(cpupowerMu, cpupowerSigma, cpupowerPDF, cpupower)
+    hddtempPrediction = model.Predict(hddtempMu, hddtempSigma, hddtempPDF, hddtemp)
 
     return cpuloadPrediction, cputempPrediction, cpupowerPrediction, hddtempPrediction
 
@@ -82,7 +73,8 @@ def checkActivity(cpuloadPrediction, cputempPrediction, cpupowerPrediction, hddt
     cputemp=sum(cputempPrediction)
     cpupower=sum(cpupowerPrediction)
     hddtemp=sum(hddtempPrediction)
-    if cpuload>=45 and cputemp>=45 and cpupower>=45 and hddtemp>=45:
+    print(cpuload, cputemp, cpupower, hddtemp)
+    if cpuload<=45 and cputemp<=45 and cpupower<=45 and hddtemp<=45:
         return 0
     else:
         return 1
@@ -91,24 +83,27 @@ def checkActivity(cpuloadPrediction, cputempPrediction, cpupowerPrediction, hddt
 def startScan(loadmodel):
     handle = sensorVariable.openhardwaremonitor()
     monitorSystem(handle)
+    print('Task Begin')
     cpuloadPrediction, cputempPrediction, cpupowerPrediction, hddtempPrediction = analyzeActivity(loadmodel)
     result = checkActivity(cpuloadPrediction, cputempPrediction, cpupowerPrediction, hddtempPrediction)
     if result==0:
         status.itemconfig(square, fill='red')
+        print('Task Complete')
     else:
         status.itemconfig(square, fill='green')
+        print('Task Complete')
 
 
 loadmodel = joblib.load('finalmodel.sav')
 gui = Tk()
-gui.title('Malware Detector v1.0')
-gui.geometry("1200x600")
+gui.title('Malware Detector v1.1')
+gui.geometry("400x600")
 
 
 ttk.Label(gui, text='Status:')
-status = Canvas(gui, width=500, height=240)
+status = Canvas(gui, width=400, height=240)
 status.pack()
-square = status.create_rectangle(100, 100, 400, 400, fill='green')
+square = status.create_rectangle(100, 100, 300, 300, fill='green')
 
 pb = ttk.Progressbar(gui, orient=HORIZONTAL, length=100, mode='determinate')
 pb.pack(expand=True)
