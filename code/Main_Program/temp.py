@@ -56,7 +56,7 @@ class classifier:
         for xi in data:
             p = 1/(sigma*sy.sqrt(2*np.pi))*sy.exp((-(xi-mu)**2)/(2*sigma**2)) #PDF Algorithm
             if math.isnan(float(p)): #Filter out NaN values to 0
-                newP=(float(p))
+                newP=float(0.0)
             else:
                 newP=p
                 
