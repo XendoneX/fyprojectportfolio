@@ -1,13 +1,14 @@
+import threading
+
 import numpy as np
 import joblib
 import csv
 import time
-import PySimpleGUI as sg
-import datetime
 import sensorVariable
 import pandas as pd
 from tkinter import *
 from tkinter import ttk
+from datetime import datetime
 import tkinter as tk
 #For machine learning
 import matplotlib.pyplot as plt
@@ -46,19 +47,23 @@ def analyzeActivity(model):
     print(cpuloadMu, cpuloadSigma, cputempMu, cputempSigma, cpupowerMu, cpupowerSigma, hddtempMu, hddtempSigma)
     #PDF
     print('pdf')
-    with open('cpuLoadPDF.csv', 'w', newline='') as cpuloadpdf:  # FILE NAME
-        model.PDF(cpuloadMu, cpuloadSigma, 3.0, 11.0, cpuload, cpuloadpdf)
-    with open('cpuTempPDF.csv', 'w', newline='') as cputemppdf:  # FILE NAME
-        model.PDF(cputempMu, cputempSigma, 42, 55, cputemp, cputemppdf)
-    with open('cpuPowerPDF.csv', 'w', newline='') as cpupowpdf:  # FILE NAME
-        model.PDF(cpupowerMu, cpupowerSigma, 2.1, 11.1, cpupower, cpupowpdf)
-    with open('hddTempPDF.csv', 'w', newline='') as hddtemppdf:  # FILE NAME
-        model.PDF(hddtempMu, hddtempSigma, 42, 55, hddtemp, hddtemppdf)
-    print('reading')
-    cpuloadPDF = pd.DataFrame(pd.read_csv('cpuLoadPDF.csv')).to_numpy()
-    cputempPDF = pd.DataFrame(pd.read_csv('cpuTempPDF.csv')).to_numpy()
-    cpupowerPDF = pd.DataFrame(pd.read_csv('cpuPowerPDF.csv')).to_numpy()
-    hddtempPDF = pd.DataFrame(pd.read_csv('hddTempPDF.csv')).to_numpy()
+
+    cpuloadPDF=model.PDF(cpuloadMu, cpuloadSigma, 3.0, 11.0, cpuload)
+    cputempPDF =model.PDF(cputempMu, cputempSigma, 40, 55, cputemp)
+    cpupowerPDF =model.PDF(cpupowerMu, cpupowerSigma, 1.9, 14.9, cpupower)
+    hddtempPDF =model.PDF(hddtempMu, hddtempSigma, 41, 55, hddtemp)
+    print('cpuload: ')
+    for xi in cpuloadPDF:
+        print(xi)
+    print('cputemp: ')
+    for xi in cputempPDF:
+        print(xi)
+    print('cpupower: ')
+    for xi in cpupowerPDF:
+        print(xi)
+    print('hddtemp: ')
+    for xi in hddtempPDF:
+        print(xi)
     #predicting
     print('prediction')
     cpuloadPrediction = model.Predict(cpuloadMu, cpuloadSigma, cpuloadPDF, cpuload)
@@ -73,41 +78,60 @@ def checkActivity(cpuloadPrediction, cputempPrediction, cpupowerPrediction, hddt
     cputemp=sum(cputempPrediction)
     cpupower=sum(cpupowerPrediction)
     hddtemp=sum(hddtempPrediction)
+    status=[cpuload,cputemp,cpupower,hddtemp]
     print(cpuload, cputemp, cpupower, hddtemp)
-    if cpuload<=45 and cputemp<=45 and cpupower<=45 and hddtemp<=45:
+    i=0
+   # if cpuload<=45 and cputemp<=45 and cpupower<=45 and hddtemp<=45:
+    for xi in status:
+        if xi <=65:
+            i+=1
+
+    if i>=3:
+        print('returned 0')
         return 0
     else:
+        print('returned 1')
         return 1
 
-
 def startScan(loadmodel):
-    handle = sensorVariable.openhardwaremonitor()
-    monitorSystem(handle)
-    print('Task Begin')
-    cpuloadPrediction, cputempPrediction, cpupowerPrediction, hddtempPrediction = analyzeActivity(loadmodel)
-    result = checkActivity(cpuloadPrediction, cputempPrediction, cpupowerPrediction, hddtempPrediction)
-    if result==0:
-        status.itemconfig(square, fill='red')
-        print('Task Complete')
-    else:
-        status.itemconfig(square, fill='green')
-        print('Task Complete')
+    while True:
+        now = datetime.now()
+        csvFile= open('predictionResults.csv', 'a', newline='')
+        writer= csv.writer(csvFile)
+        handle = sensorVariable.openhardwaremonitor()
+        monitorSystem(handle)
+        print('Task Begin')
+        cpuloadPrediction, cputempPrediction, cpupowerPrediction, hddtempPrediction = analyzeActivity(loadmodel)
+
+        result = checkActivity(cpuloadPrediction, cputempPrediction, cpupowerPrediction, hddtempPrediction)
+        for xi in range(len(cpuloadPrediction)):
+            writer.writerow([now.strftime("%d/%m/%Y %H:%M:%S"), cpuloadPrediction[xi], cputempPrediction[xi], cpupowerPrediction[xi], hddtempPrediction[xi]])
+
+        if result==0:
+            status.itemconfig(square, fill='red')
+            print('Task Complete')
+        else:
+            status.itemconfig(square, fill='green')
+            print('Task Complete')
+
+def sleepTime():
+    time.sleep(60)
 
 
 loadmodel = joblib.load('finalmodel.sav')
 gui = Tk()
-gui.title('Malware Detector v1.1')
+gui.title('Malware Detector v1.3')
 gui.geometry("400x600")
-
 
 ttk.Label(gui, text='Status:')
 status = Canvas(gui, width=400, height=240)
 status.pack()
 square = status.create_rectangle(100, 100, 300, 300, fill='green')
 
-pb = ttk.Progressbar(gui, orient=HORIZONTAL, length=100, mode='determinate')
+pb = ttk.Progressbar(gui, orient=HORIZONTAL, length=200, mode='determinate')
 pb.pack(expand=True)
 
-scanButton = ttk.Button(master=gui, text='Start Scan', command=lambda: startScan(loadmodel))
+scanButton = ttk.Button(master=gui, text='Start Scan', command=threading.Thread(target=lambda: startScan(loadmodel)).start())
 scanButton.pack(side='bottom', expand=True)
+
 gui.mainloop()

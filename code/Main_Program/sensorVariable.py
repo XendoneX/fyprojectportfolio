@@ -11,7 +11,6 @@ def openhardwaremonitor():
     handle = Hardware.Computer()
     handle.CPUEnabled = True
     handle.RAMEnabled = True
-    handle.GPUEnabled = False
     handle.HDDEnabled = True
     handle.Open()
     return handle
@@ -59,21 +58,16 @@ def fetch_ramUsage(HardwareHandle):
                 return sensor.Value
 
 if __name__ == "__main__":
+#while True:
     HardwareHandle = openhardwaremonitor()
-    print("cpuLoad: ")
-    print(fetch_cpuLoad(HardwareHandle))
+    print("cpuLoad: ", fetch_cpuLoad(HardwareHandle))
 
-    print("cpuPower: ")
-    print(fetch_cpuPower(HardwareHandle))
+    print("cpuPower: ", fetch_cpuPower(HardwareHandle))
 
-    print("cpuTemp: ")
-    print(fetch_cpuTemp(HardwareHandle))
+    print("cpuTemp: ", fetch_cpuTemp(HardwareHandle))
 
-    print("hddTemp: ")
-    print(fetch_hddTemp(HardwareHandle))
+    print("hddTemp: ", fetch_hddTemp(HardwareHandle))
 
-    print("ramLoad: ")
-    print(fetch_ramLoad(HardwareHandle))
+    print("ramLoad: ", fetch_ramLoad(HardwareHandle))
 
-    print("ramUsage: ")
-    print(fetch_ramUsage(HardwareHandle))
+    print("ramUsage: ", fetch_ramUsage(HardwareHandle))
