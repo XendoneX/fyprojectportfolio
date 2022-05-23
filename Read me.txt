@@ -1,0 +1,13 @@
+code file contains code for machine learning classifier and main program
+
+data file:
+	-- Uneditied Classifier Training Data = Data
+	-- Classifier Training Data = Data Without Heading
+	-- Targets = Data Training Targets
+
+portfolio:	
+	-- Monitoring Interval Graphs = Graphs used for analysing monitoring interval data
+	-- Program Result Graphs = Graphs of data gathered from final program
+	-- System Activity Graphs = Graphs of the various datasets collected from different programs
+	-- Training Data Graphs = Graphs of the classifier training data 
+	
