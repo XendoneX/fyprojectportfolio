@@ -10,15 +10,15 @@ from decimal import Decimal
 
 
 class classifier:
-
+    #Runs all the code depending on the hardware variable
     def CpuLoad(data):
-        names = ['cpuLoad', 'cpuTemp', 'cpuPower', 'ramLoad', 'ramData', 'hddTemp', 'cpuTargets', 'hddTargets']
-        dataset = pd.DataFrame(pd.read_csv('combined_data.csv', names=names))
-        cpuload = dataset['cpuLoad']
-        loadMu, loadSig = classifier.MLE(cpuload)
-        loadPdf = classifier.PDF(loadMu, loadSig, 3.0, 11.0, cpuload)
-        loadPA, loadPM = classifier.Threshhold(loadPdf)
-        array = classifier.Predict(loadMu, loadSig, loadPdf, data, loadPA, loadPM)
+        names = ['cpuLoad', 'cpuTemp', 'cpuPower', 'ramLoad', 'ramData', 'hddTemp', 'cpuTargets', 'hddTargets'] #names for each column in the given dataset
+        dataset = pd.DataFrame(pd.read_csv('combined_data.csv', names=names)) #load dataset in accordance with the name
+        cpuload = dataset['cpuLoad'] #loads the dataset according to the column name
+        loadMu, loadSig = classifier.MLE(cpuload) #Calculates the MLE Mu and Sigma of newly collected CPU Load dataset
+        loadPdf = classifier.PDF(loadMu, loadSig, 3.0, 11.0, cpuload) #Gets PDF of newly collected CPULoad dataset
+        loadPA, loadPM = classifier.Threshhold(loadPdf) #gets the overall likelihood
+        array = classifier.Predict(loadMu, loadSig, loadPdf, data, loadPA, loadPM) #returns the results
         return array
 
     def CpuTemp(data):
@@ -51,6 +51,7 @@ class classifier:
         array = classifier.Predict(hddMu, hddSig, hddPdf, data, hddPA, hddPM)
         return array
 
+    #Start of machine learning model
     def MLE(data):
         N = len(data)  # number of values in data
         # Mu Hat
