@@ -6,4 +6,6 @@
 
 4. Take OpenHardwareMonitorLib.dll and place it in the Main Program
 
-5. Done!
+5. Additional Python Libraries Required: scikit-learn, Scypy, Numpy, Pythonnet, and Pandas
+
+6. Done
